@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Geolocation</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 95%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 95%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+
+  	<video autoplay></video>
+
+	<script>
+	const constraints = {
+  	video: true
+	};
+
+	const video = document.querySelector('video');
+
+	navigator.mediaDevices.getUserMedia(constraints).
+  	then((stream) => {video.srcObject = stream;});
+	</script>
+
+    <div id="map"></div>
+    <script>
+      // Note: This example requires that you consent to location sharing when
+      // prompted by your browser. If you see the error "The Geolocation service
+      // failed.", it means you probably did not give permission for the browser to
+      // locate you.
+      var map, infoWindow;
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 33.7819, lng: -84.387},
+          zoom: 18
+        });
+        infoWindow = new google.maps.InfoWindow;
+
+        // Try HTML5 geolocation.
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+            var pos = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+            infoWindow.setPosition(pos);
+            infoWindow.setContent('Location found.');
+            infoWindow.open(map);
+            map.setCenter(pos);
+            var image = {url: "https://images-na.ssl-images-amazon.com/images/S/sgp-catalog-images/region_US/wb-883316843024-Full-Image_GalleryBackground-en-US-1483994511403._RI_SX940_.jpg", scaledSize: new google.maps.Size(50,50)};
+            var marker = new google.maps.Marker({position: pos, map: map, icon: image});
+          },
+          function() {
+            handleLocationError(true, infoWindow, map.getCenter());
+          });
+        } else {
+          // Browser doesn't support Geolocation
+          handleLocationError(false, infoWindow, map.getCenter());
+        }
+      }
+
+      function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+        infoWindow.setPosition(pos);
+        infoWindow.setContent(browserHasGeolocation ?
+                              'Error: The Geolocation service failed.' :
+                              'Error: Your browser doesn\'t support geolocation.');
+        infoWindow.open(map);
+      }
+    </script>
+    <div id="buttons"><input type="file" accept="image/*;capture=camera"></div>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBs9xkjs1ZT7qfX9PIQEql2c8OJK2nd56w&callback=initMap">
+    </script>
+  </body>
+</html>
